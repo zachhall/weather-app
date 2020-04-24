@@ -18,13 +18,21 @@ class App extends Component {
 
   getWeather = () => {
     const zipInput = document.getElementById("zipInput").value;
+    let degUnit = null;
+
+    if (document.getElementById("imperial").checked) {
+      degUnit = "imperial";
+    } else {
+      degUnit = "metric";
+    }
 
     fetch(
       "https://api.openweathermap.org/data/2.5/weather?zip=" +
         zipInput +
         ",us&appid=" +
         process.env.REACT_APP_OW_API_KEY +
-        "&units=imperial"
+        "&units=" +
+        degUnit
     )
       .then((response) => {
         if (response.status !== 200) {
@@ -36,7 +44,6 @@ class App extends Component {
 
         // Examine the text in the response
         response.json().then((data) => {
-          console.log(data);
           this.setState({
             zip: zipInput,
             temperature: data.main.temp,
@@ -58,11 +65,32 @@ class App extends Component {
         <div id="form">
           <input type="text" placeholder="Enter ZIP Code" id="zipInput"></input>
           <button onClick={this.getWeather}>Search</button>
+          <div className="btn-group btn-group-toggle" data-toggle="buttons">
+            <label className="btn btn-secondary active">
+              <input
+                type="radio"
+                name="options"
+                id="imperial"
+                checked
+                onClick={this.getWeather}
+              />
+              Imperial
+            </label>
+            <label className="btn btn-secondary">
+              <input
+                type="radio"
+                name="options"
+                id="metric"
+                onClick={this.getWeather}
+              />
+              Metric
+            </label>
+          </div>
         </div>
         <div>
-          <span id="temp">{this.state.temperature}</span>
-          <span id="feelsLike">{this.state.feels_like}</span>
-          <span id="city">{this.state.city}</span>
+          <p id="temp">{this.state.temperature}</p>
+          <p id="feelsLike">{this.state.feels_like}</p>
+          <p id="city">{this.state.city}</p>
           <h3>{this.state.time}</h3>
         </div>
       </>
